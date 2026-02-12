@@ -5,18 +5,8 @@ goal_state = [  [1,2,3],
                 [7,8,0]
             ]
 
-nodes_expanded = 0
-max_queue_size = 0
-
 def check_goal_state(state):
     return state == goal_state
-
-def print_state(state):
-    for i in range(len(state)):
-        row_str = ""
-        for j in range(len(state[i])):
-            row_str += str(state[i][j]) + " "
-        print("Row " + str(i + 1) + ": " + row_str.strip())
 
 def move_0_up(state):
     new_state = copy.deepcopy(state)
@@ -130,7 +120,6 @@ def compare_states(state1, state2):
     return True
 
 def expand(state, heuristic):
-    global nodes_expanded
     expanded_states = []
     up = move_0_up(state[0])
     down = move_0_down(state[0])
@@ -139,56 +128,42 @@ def expand(state, heuristic):
     
     if heuristic == "uniform cost":
         if up != None:
-            nodes_expanded += 1
             expanded_states.append([up, state[1]+1, 0])
         if down != None:
-            nodes_expanded += 1
             expanded_states.append([down, state[1]+1, 0])
         if left != None:
-            nodes_expanded += 1
             expanded_states.append([left, state[1]+1, 0]) 
         if right != None:
-            nodes_expanded += 1
             expanded_states.append([right, state[1]+1, 0])
     elif heuristic == "manhattan distance":
         if up != None:
-            nodes_expanded += 1
             dist_to_goal = manhattan_distance_heuristic(up)
             expanded_states.append([up, state[1]+1, dist_to_goal])
         if down != None:
-            nodes_expanded += 1
             dist_to_goal = manhattan_distance_heuristic(down)
             expanded_states.append([down, state[1]+1, dist_to_goal])
         if left != None:
-            nodes_expanded += 1
             dist_to_goal = manhattan_distance_heuristic(left)
             expanded_states.append([left, state[1]+1, dist_to_goal])
         if right != None:
-            nodes_expanded += 1
             dist_to_goal = manhattan_distance_heuristic(right)
             expanded_states.append([right, state[1]+1, dist_to_goal])
     elif heuristic == "misplaced tile":
         if up != None:
-            nodes_expanded += 1
             dist_to_goal = misplaced_tile_heuristic(up)
             expanded_states.append([up, state[1]+1, dist_to_goal])
         if down != None:
-            nodes_expanded += 1
             dist_to_goal = misplaced_tile_heuristic(down)
             expanded_states.append([down, state[1]+1, dist_to_goal])
         if left != None:
-            nodes_expanded += 1
             dist_to_goal = misplaced_tile_heuristic(left)
             expanded_states.append([left, state[1]+1, dist_to_goal])
         if right != None:
-            nodes_expanded += 1
             dist_to_goal = misplaced_tile_heuristic(right)
             expanded_states.append([right, state[1]+1, dist_to_goal])
     return expanded_states
 
 def a_star(inital_state, heuristic):
-    global max_queue_size
-    i = 0
     nodes = []
     depth = 0
     dist_to_goal = 0 # we can do this because the inital state is going to be the first node expanded anyways
@@ -208,19 +183,8 @@ def a_star(inital_state, heuristic):
             continue
         visited_nodes.append(curr_node[0])
         if check_goal_state(curr_node[0]):
-            print("Goal state found")
-            
             return curr_node[1]
-        print("Best node to expand is: ")
-        print_state(curr_node[0])
-        print("Depth of this node is " + str(curr_node[1]))
-        print("Heuristic of this node is " + str(curr_node[2]))
         nodes = queuing_function(nodes, expand(curr_node, heuristic))
-        i += 1
-        if len(nodes) > max_queue_size:
-            max_queue_size = len(nodes)
-        if i == 2:
-            break
 
 test_state_0 = [    [1,2,3],
                     [4,5,6],
@@ -261,65 +225,32 @@ test_state_7 = [    [0,7,2],
                     [4,6,1],
                     [3,5,8]
                 ]
+# uniform cost test cases
+print("uniform cost test case 0: " + str(a_star(test_state_0, "uniform cost")))
+print("uniform cost test case 1: " + str(a_star(test_state_1, "uniform cost")))
+#print("uniform cost test case 2: " + str(a_star(test_state_2, "uniform cost")))
+#print("uniform cost test case 3: " + str(a_star(test_state_3, "uniform cost")))
+#print("uniform cost test case 4: " + str(a_star(test_state_4, "uniform cost")))
+#print("uniform cost test case 5: " + str(a_star(test_state_5, "uniform cost")))
+#print("uniform cost test case 6: " + str(a_star(test_state_6, "uniform cost")))
+#print("uniform cost test case 7: " + str(a_star(test_state_7, "uniform cost")))
 
-test_cases = [
-    test_state_0,
-    test_state_1,
-    test_state_2,
-    test_state_3,
-    test_state_4,
-    test_state_5,
-    test_state_6,
-    test_state_7,
-]
+# misplaced tile test cases
+print("misplaced tile test case 0: " + str(a_star(test_state_0, "misplaced tile")))
+print("misplaced tile test case 1: " + str(a_star(test_state_1, "misplaced tile")))
+# print("misplaced tile test case 2: " + str(a_star(test_state_2, "misplaced tile")))
+# print("misplaced tile test case 3: " + str(a_star(test_state_3, "misplaced tile")))
+# print("misplaced tile test case 4: " + str(a_star(test_state_4, "misplaced tile")))
+# print("misplaced tile test case 5: " + str(a_star(test_state_5, "misplaced tile")))
+# print("misplaced tile test case 6: " + str(a_star(test_state_6, "misplaced tile")))
+# print("misplaced tile test case 7: " + str(a_star(test_state_7, "misplaced tile")))
 
-def test_algorithm():
-    user_reponse = input(("Hello, welcome to 8-Puzzle solver. Enter '1' to choose a default puzzle and '2' for a custom puzzle\n"))
-    if user_reponse == "1":
-        for i, state in enumerate(test_cases):
-            print(f"Test Case {i}:")
-            print_state(state)
-            print('\n')
-
-        choice = input("Enter the number of the puzzle you want to solve: ")
-        custom_state = test_cases[int(choice)]
-    
-    elif user_reponse == "2":
-        print("Enter your custom puzzle:")
-        row1 = input("Enter row 1 (3 numbers separated by spaces): ").split()
-        row2 = input("Enter row 2 (3 numbers separated by spaces): ").split()
-        row3 = input("Enter row 3 (3 numbers separated by spaces): ").split()
-        custom_state =  [
-                         [int(row1[0]), int(row1[1]), int(row1[2])],
-                         [int(row2[0]), int(row2[1]), int(row2[2])],
-                         [int(row3[0]), int(row3[1]), int(row3[2])]
-                        ]
-    else:
-        print("Invalid input!")
-        return
-    
-    
-    algorithm = input("Enter '1' for Uniform Cost Search, '2' for A* with Misplaced Tile Heuristic, or '3' for A* with Manhattan Distance Heuristic\n")
-    
-    if algorithm == "1":
-        heuristic = "uniform cost"
-    elif algorithm == "2":
-        heuristic = "misplaced tile"
-    elif algorithm == "3":
-        heuristic = "manhattan distance"
-    else:
-        print("Invalid algorithm choice!")
-        return
-
-    result = a_star(custom_state, heuristic)
-    
-    if result == -1:
-        print("No solution")
-    else:
-        global nodes_expanded
-        global max_queue_size
-        print("Nodes expanded: " + str(nodes_expanded))
-        print("Max queue size: " + str(max_queue_size))
-        print(f"Solution found at depth {result}")
-
-test_algorithm()
+# manhattan distance test cases
+# print("manhattan distance test case 0: " + str(a_star(test_state_0, "manhattan distance")))
+# print("manhattan distance test case 1: " + str(a_star(test_state_1, "manhattan distance")))
+# print("manhattan distance test case 2: " + str(a_star(test_state_2, "manhattan distance")))
+# print("manhattan distance test case 3: " + str(a_star(test_state_3, "manhattan distance")))
+# print("manhattan distance test case 4: " + str(a_star(test_state_4, "manhattan distance")))
+# print("manhattan distance test case 5: " + str(a_star(test_state_5, "manhattan distance")))
+# print("manhattan distance test case 6: " + str(a_star(test_state_6, "manhattan distance")))
+print("manhattan distance test case 7: " + str(a_star(test_state_7, "manhattan distance")))

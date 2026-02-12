@@ -188,7 +188,6 @@ def expand(state, heuristic):
 
 def a_star(inital_state, heuristic):
     global max_queue_size
-    i = 0
     nodes = []
     depth = 0
     dist_to_goal = 0 # we can do this because the inital state is going to be the first node expanded anyways
@@ -216,12 +215,9 @@ def a_star(inital_state, heuristic):
         print("Depth of this node is " + str(curr_node[1]))
         print("Heuristic of this node is " + str(curr_node[2]))
         nodes = queuing_function(nodes, expand(curr_node, heuristic))
-        i += 1
         if len(nodes) > max_queue_size:
             max_queue_size = len(nodes)
-        if i == 2:
-            break
-
+        
 test_state_0 = [    [1,2,3],
                     [4,5,6],
                     [7,8,0]
